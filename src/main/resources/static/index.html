@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring AI Test</title>
+</head>
+<body>
+
+<button id="callButton" style="margin-right: 10px;">simple/call</button>
+
+<button id="stream1Button" style="margin-right: 10px;">simple/stream1</button>
+
+<button id="stream2Button">simple/stream2</button>
+
+<hr>
+<div id="responseArea">响应:</div>
+
+<script>
+
+    document.getElementById('callButton').addEventListener('click', function () {
+        fetch('/simple/call')
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                }
+                throw new Error('请求失败！');
+            })
+            .then(data => {
+                document.getElementById('responseArea').textContent = data;
+            })
+            .catch(error => {
+                document.getElementById('responseArea').textContent = error.message;
+            });
+    });
+
+
+    document.getElementById('stream1Button')
+        .addEventListener('click', () => fetchStream('/simple/stream'));
+
+    document.getElementById('stream2Button')
+        .addEventListener('click', () => fetchStream('/simple/stream2'));
+
+
+
+
+    async function fetchStream(url) {
+
+        try {
+            // Making a POST request to the server
+            const response = await fetch(url, {
+                method: 'GET',
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const reader = response.body.getReader();
+            let receivedLength = 0;
+            const outputElement = document.getElementById("responseArea");
+            outputElement.textContent = '';
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) {
+                    console.log('Data fully received');
+                    break;
+                }
+                const chunk = new TextDecoder("utf-8").decode(value);
+                console.log("Chunk received: " + chunk);
+                receivedLength += value.length;
+
+                // Display each chunk on the webpage
+                outputElement.innerHTML += chunk;
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+        }
+    }
+
+
+
+</script>
+
+</body>
+
+</html>
