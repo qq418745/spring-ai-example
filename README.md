@@ -12,3 +12,10 @@
 
 ### 在线玩弄服务~
 >  https://ai.coala.top/index.html
+
+
+
+### PS
+
+如果因不可抗力须使用代理站， [application.yaml](src%2Fmain%2Fresources%2Fapplication.yaml) 中记得配置 base-url
+
