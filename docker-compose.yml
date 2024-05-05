@@ -1,0 +1,17 @@
+version: '3'
+services:
+  coalai:
+    container_name: coalai
+    image: openjdk:17
+    ports:
+      - "8080:8080"
+    volumes:
+      - /etc/hosts:/etc/hosts
+      - /etc/timezone:/etc/timezone
+      - /root/springai:/root/springai
+    working_dir: /root/springai
+    command:
+      [ "java","-jar","-server", "-Xms512m", "-Xmx1024m",
+        "-Dspring.profiles.active=dev",
+        "coalai.jar" ]
+
