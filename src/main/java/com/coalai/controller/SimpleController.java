@@ -2,7 +2,6 @@ package com.coalai.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.ChatResponse;
 import org.springframework.ai.chat.StreamingChatClient;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatClient;
@@ -10,14 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/simple")
 @Slf4j
-public class SimpleStreamController {
+public class SimpleController {
 
     private final OpenAiChatClient chatClient;
 

@@ -5,13 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spring AI Test</title>
 </head>
+
+<style>
+
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    .container { display: flex; padding: 20px; }
+    .left { width: 30%; padding-right: 10px; }
+    .right { width: 70%; padding-left: 10px; }
+    #responseArea { background-color: #f4f4f4; padding: 10px; margin-top: 20px;}
+    .resizable { width: 100%; height: 250px; }
+    button { padding: 8px; margin-bottom: 5px; font-size: 12px; }
+    hr { margin-top: 20px; }
+</style>
+
 <body>
 
-<button id="callButton" style="margin-right: 10px;">simple/call</button>
 
-<button id="stream1Button" style="margin-right: 10px;">simple/stream1</button>
 
-<button id="stream2Button">simple/stream2</button>
+<div class="container">
+    <div class="left">
+        <h4>simple</h4>
+        <button id="callButton">simple/call</button>
+        <button id="stream1Button">simple/stream1</button>
+        <button id="stream2Button">simple/stream2</button>
+    </div>
+    <div class="right">
+        <h4>session stream</h4>
+        <button id="syncStream">session/sync/stream</button>
+        <button id="asyncStream">session/async/stream</button>
+        <textarea class="resizable" id="jsonBody"></textarea>
+    </div>
+</div>
 
 <hr>
 <div id="responseArea">响应:</div>
@@ -36,21 +61,70 @@
 
 
     document.getElementById('stream1Button')
-        .addEventListener('click', () => fetchStream('/simple/stream'));
+        .addEventListener('click', () => fetchStream('/simple/stream', 'GET', new Headers()));
 
     document.getElementById('stream2Button')
-        .addEventListener('click', () => fetchStream('/simple/stream2'));
+        .addEventListener('click', () => fetchStream('/simple/stream2', 'GET', new Headers()));
+
+
+    const headers = new Headers({
+        'Content-Type': 'application/json',
+    });
+
+    let body = {
+        "model": "gpt-3.5-turbo",
+        "messages": [{
+            "content": [{
+                "type": "text",
+                "text": "You are ChatGPT"
+            }],
+            "role": "system"
+        }, {
+            "content": [{
+                "type": "text",
+                "text": "讲个猫狗笑话, 必须200字左右"
+            }],
+            "role": "user"
+        },
+            {
+                "content": [{
+                    "type": "text",
+                    "text": "不，不要啊~"
+                }],
+                "role": "assistant"
+            }
+        ]
+    }
+
+    document.getElementById('jsonBody').value = JSON.stringify(body, null, 2);
+
+
+
+    document.getElementById('syncStream')
+        .addEventListener('click', () => fetchStream('/session/sync/stream', 'POST', headers));
+
+    document.getElementById('asyncStream')
+        .addEventListener('click', () => fetchStream('/session/async/stream', 'POST', headers));
 
 
 
 
-    async function fetchStream(url) {
+
+    async function fetchStream(url, method, headers) {
+
 
         try {
+
+            let options = {
+                method: method,
+                headers: headers
+            };
+
+            if (method !== 'GET') {
+                options.body = JSON.stringify(JSON.parse(document.getElementById('jsonBody').value));
+            }
             // Making a POST request to the server
-            const response = await fetch(url, {
-                method: 'GET',
-            });
+            const response = await fetch(url, options);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
