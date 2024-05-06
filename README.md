@@ -1,5 +1,6 @@
 # spring-ai-example
 
+![示例GIF](./example.gif)
 ### 前提条件
 
 [application.yaml](src%2Fmain%2Fresources%2Fapplication.yaml) 中配置你的 API Key 启动即可 ~
